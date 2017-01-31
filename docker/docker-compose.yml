@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+  web:
+    image: dug/web:0.1
+    build: ./web
+    container_name: dug_web
+    ports:
+      - "3031:3031"
+    volumes:
+      - ..:/dug
+    working_dir: /dug/mysite
+    command: >
+      bash -c "uwsgi --socket :3031  --module mysite.wsgi"
+  nginx:
+    image: dug/nginx:0.1
+    build: ./nginx
+    container_name: dug_nginx
+    depends_on:
+      - web
+    links:
+      - web
+    ports:
+      - "8000:8000"
+    volumes:
+      - ..:/dug
+    working_dir: /dug
